@@ -20,6 +20,7 @@ struct Slang {
         WGSL,
         SPIRV_VK,
         REFLECTION,     // special 'virtual slang' for extracting reflection info
+        GLSL450,
         Num,
     };
 
@@ -49,6 +50,7 @@ inline const char* Slang::to_str(Enum c) {
     switch (c) {
         case GLSL410:       return "glsl410";
         case GLSL430:       return "glsl430";
+        case GLSL450:       return "glsl450";
         case GLSL300ES:     return "glsl300es";
         case GLSL310ES:     return "glsl310es";
         case HLSL4:         return "hlsl4";
@@ -82,6 +84,7 @@ inline bool Slang::is_glsl(Enum c) {
     switch (c) {
         case GLSL410:
         case GLSL430:
+        case GLSL450:
         case GLSL300ES:
         case GLSL310ES:
             return true;

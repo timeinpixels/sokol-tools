@@ -369,6 +369,10 @@ static SpirvcrossSource to_glsl(const Input& inp, const SpirvBlob& blob, Slang::
             options.version = 430;
             options.es = false;
             break;
+        case Slang::GLSL450:
+            options.version = 450;
+            options.es = false;
+            break;
         case Slang::GLSL300ES:
             options.version = 300;
             options.es = true;
@@ -386,13 +390,9 @@ static SpirvcrossSource to_glsl(const Input& inp, const SpirvBlob& blob, Slang::
             assert(false);
             break;
     }
-    if (Slang::is_spirv(slang)) {
-        options.vulkan_semantics = true;
-        options.emit_uniform_buffer_as_plain_uniforms = false;
-    } else {
-        options.vulkan_semantics = false;
-        options.emit_uniform_buffer_as_plain_uniforms = true;
-    }
+    const bool slang_is_spirv = Slang::is_spirv(slang);
+    options.vulkan_semantics = slang_is_spirv || (slang == Slang::GLSL450);
+    options.emit_uniform_buffer_as_plain_uniforms = !slang_is_spirv;
     options.enable_420pack_extension = false;
     options.vertex.support_nonzero_base_instance = false;
     options.vertex.fixup_clipspace = (0 != (opt_mask & Option::FIXUP_CLIPSPACE));
