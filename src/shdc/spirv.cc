@@ -2,6 +2,7 @@
     compile GLSL to SPIRV, wrapper around https://github.com/KhronosGroup/glslang
 */
 #include <stdlib.h>
+#include <string.h>
 #include "spirv.h"
 #include "fmt/format.h"
 #include "pystring.h"
@@ -295,6 +296,20 @@ bool Spirv::write_to_file(const Args& args, const Input& inp, Slang::Enum slang)
                 fmt::print("Failed to open '{}' for writing!\n", path);
                 return false;
             }
+        }
+    }
+    return true;
+}
+
+bool Spirv::extract_glsl_spv(const Input& inp, std::vector<uint8_t>& vs, std::vector<uint8_t>& fs) {
+    for (const SpirvBlob& blob: blobs) {
+        const Snippet& snippet = inp.snippets[blob.snippet_index];
+        if (snippet.name == "vs") {
+            vs.resize(blob.bytecode.size() * sizeof(uint32_t));
+            memcpy(vs.data(), blob.bytecode.data(), vs.size());
+        } else if (snippet.name == "fs") {
+            fs.resize(blob.bytecode.size() * sizeof(uint32_t));
+            memcpy(fs.data(), blob.bytecode.data(), fs.size());
         }
     }
     return true;

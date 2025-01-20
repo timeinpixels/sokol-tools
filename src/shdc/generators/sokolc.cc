@@ -307,6 +307,15 @@ void SokolCGenerator::gen_shader_desc_func(const GenInput& gen, const ProgramRef
                     }
                 }
             }
+            if (Slang::is_glsl(slang)) {
+                const auto module_name = gen.inp.module;
+                l("#if defined(NOBE_VULKAN)\n");
+                l("desc.spv_vs.ptr = {}_glsl_spv_vs;\n", module_name);
+                l("desc.spv_vs.size = sizeof({}_glsl_spv_vs);\n", module_name);
+                l("desc.spv_fs.ptr = {}_glsl_spv_fs;\n", module_name);
+                l("desc.spv_fs.size = sizeof({}_glsl_spv_fs);\n", module_name);
+                l("#endif\n");
+            }
             for (int ub_index = 0; ub_index < MaxUniformBlocks; ub_index++) {
                 const UniformBlock* ub = prog.bindings.find_uniform_block_by_sokol_slot(ub_index);
                 if (ub) {

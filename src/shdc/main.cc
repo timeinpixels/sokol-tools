@@ -16,6 +16,8 @@ using namespace shdc::gen;
 
 int main(int argc, const char** argv) {
     Spirv::initialize_spirv_tools();
+    std::vector<uint8_t> spv_vs;
+    std::vector<uint8_t> spv_fs;
 
     // parse command line args
     const Args args = Args::parse(argc, argv);
@@ -71,6 +73,9 @@ int main(int argc, const char** argv) {
                 if (!spirv[i].write_to_file(args, inp, slang)) {
                     return 10;
                 }
+            }
+            if (slang == Slang::GLSL450) {
+                spirv[i].extract_glsl_spv(inp, spv_vs, spv_fs);
             }
         }
     }
@@ -128,7 +133,7 @@ int main(int argc, const char** argv) {
     }
 
     // generate output files
-    const GenInput gen_input(args, inp, spirvcross, bytecode, refl);
+    const GenInput gen_input(args, inp, spirvcross, bytecode, refl, spv_vs, spv_fs);
     ErrMsg gen_error = generate(args.output_format, gen_input);
     if (gen_error.valid()) {
         gen_error.print(args.error_format);

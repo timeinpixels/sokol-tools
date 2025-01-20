@@ -253,6 +253,32 @@ void Generator::gen_shader_arrays(const GenInput& gen) {
             }
         }
     }
+    if (!gen.spv_vs.empty() && !gen.spv_fs.empty()) {
+        const auto& spv_vs = gen.spv_vs;
+        const auto& spv_fs = gen.spv_fs;
+        gen_shader_array_start(gen, gen.inp.module + "_glsl_spv_vs", spv_vs.size(), Slang::GLSL450);
+        for (size_t i = 0; i < spv_vs.size(); i++) {
+            if ((i & 15) == 0) {
+                l("    ");
+            }
+            l("{:#04x},", (int)spv_vs[i]);
+            if ((i & 15) == 15) {
+                l("\n");
+            }
+        }
+        gen_shader_array_end(gen);
+        gen_shader_array_start(gen, gen.inp.module + "_glsl_spv_fs", spv_fs.size(), Slang::GLSL450);
+        for (size_t i = 0; i < spv_fs.size(); i++) {
+            if ((i & 15) == 0) {
+                l("    ");
+            }
+            l("{:#04x},", (int)spv_fs[i]);
+            if ((i & 15) == 15) {
+                l("\n");
+            }
+        }
+        gen_shader_array_end(gen);
+    }
 }
 
 void Generator::gen_shader_desc_funcs(const GenInput& gen) {
